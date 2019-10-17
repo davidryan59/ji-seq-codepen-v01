@@ -10,24 +10,24 @@
   // Channel / Voice setup
   // Currently it is Bass, Tenor, Alto, Soprano, Descant; 2 channels for each
   const s = {
-    channelNames: ['B1', 'B2', 'T1', 'T2', 'A1', 'A2', 'S1', 'S2', 'D1', 'D2'],
-    channelSolo:  [   0,    0,    0,    0,    0,    0,    0,    0,    0,    0], // 1 to solo
-    channelMute:  [   0,    0,    0,    0,    0,    0,    0,    0,    0,    0], // 1 to mute
-    channelGainDb:[  -2,   -2,   -2,   -2,   -2,   -2,   -2,   -2,   -2,   -2], // 0 is no change
-    oscAttack:    [0.05, 0.05, 0.20, 0.30, 0.20, 0.02, 0.20, 0.04, 0.50, 0.60], // Positive decimal
-    oscDecay:     [0.30, 0.30, 0.60, 1.00, 0.60, 0.50, 0.60, 0.50, 0.60, 0.50], // Positive decimal
-    oscSustain:   [0.90, 0.90, 0.80, 0.77, 0.77, 0.77, 0.80, 0.80, 0.90, 0.85], // Positive decimal
-    oscRelease:   [5.00, 5.00, 3.00, 2.50, 2.50, 2.50, 2.00, 2.00, 1.50, 1.50], // Positive decimal
-    harmonic:     [   1,    3,    1,    2,    1,    6,    1,    2,    1,    4], // Positive INTEGER
-    modIndex:     [  15,   12,   10,    9,    8,    5,    6,    6,    5,    6], // Positive decimal
-    modAttack:    [0.01, 0.01, 0.01, 0.01, 0.01, 0.12, 0.01, 0.05, 0.80, 0.65], // Positive decimal
-    modDecay:     [0.30, 0.30, 0.10, 0.10, 1.00, 1.00, 1.00, 0.60, 4.00, 4.00], // Positive decimal
-    modSustain:   [0.90, 0.80, 0.70, 0.70, 0.77, 0.88, 0.80, 0.50, 0.80, 0.80], // Positive decimal
-    modRelease:   [0.50, 0.80, 1.00, 1.50, 0.60, 0.40, 0.50, 0.80, 0.75, 0.80], // Positive decimal
+    channelNames: [  'B1',  'B2',  'T1',  'T2',  'A1',  'A2',  'S1',  'S2',  'D1',  'D2'],
+    channelSolo:  [     0,     0,     0,     0,     0,     0,     0,     0,     0,     0], // 1 to solo
+    channelMute:  [     0,     0,     0,     0,     0,     0,     0,     0,     0,     0], // 1 to mute
+    channelGainDb:[    -4,    -4,    -4,    -4,    -4,    -4,    -3,    -3,    -6,    -6], // 0 is no change
+    oscAttack:    [  0.10,  0.01,  0.05,  0.01,  0.04,  0.02,  0.04,  0.02,  0.50,  0.60], // Positive decimal
+    oscDecay:     [  0.30,  0.30,  1.00,  1.00,  1.00,  0.50,  0.60,  0.50,  0.60,  0.50], // Positive decimal
+    oscSustain:   [  0.90,  0.90,  0.80,  0.77,  0.77,  0.77,  0.80,  0.80,  0.90,  0.85], // Positive decimal
+    oscRelease:   [  5.00,  5.00,  3.00,  2.50,  2.50,  2.50,  2.00,  2.00,  1.50,  1.50], // Positive decimal
+    harmonic:     [     1,     4,     1,     3,     1,     6,     1,     2,     1,     2], // Positive INTEGER
+    modIndex:     [  13.0,  12.0,  10.0,   9.0,   6.0,   5.0,   6.0,   6.0,   5.0,   6.0], // Positive decimal
+    modAttack:    [  0.05, 0.001,  0.03, 0.002, 0.035, 0.003,  0.04, 0.004,  0.80,  0.65], // Positive decimal
+    modDecay:     [  0.70,  0.50,  0.80,  0.50,  0.70,  0.30,  1.00,  0.25,  4.00,  4.00], // Positive decimal
+    modSustain:   [  0.80,  0.50,  0.80,  0.30,  0.88,  0.40,  0.80,  0.35,  0.80,  0.80], // Positive decimal
+    modRelease:   [  2.00,  1.20,  1.00,  1.50,  0.60,  0.90,  0.50,  0.80,  0.75,  0.80], // Positive decimal
   }
 
   // Control variables
-  const beatsPerMinute = 180;
+  const beatsPerMinute = 140;
   const playTotalBeats = 480;
   const startAtBeat = 0;
 
