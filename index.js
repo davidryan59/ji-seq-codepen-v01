@@ -13,7 +13,7 @@
     channelNames: ['B1', 'B2', 'T1', 'T2', 'A1', 'A2', 'S1', 'S2', 'D1', 'D2'],
     channelSolo:  [   0,    0,    0,    0,    0,    0,    0,    0,    0,    0], // 1 to solo
     channelMute:  [   0,    0,    0,    0,    0,    0,    0,    0,    0,    0], // 1 to mute
-    channelVolDb: [  -2,   -2,   -2,   -2,   -2,   -2,   -2,   -2,   -2,   -2], // 0 is no change
+    channelGainDb:[  -2,   -2,   -2,   -2,   -2,   -2,   -2,   -2,   -2,   -2], // 0 is no change
     oscAttack:    [0.12, 0.12, 0.12, 0.12, 0.12, 0.12, 0.12, 0.12, 0.12, 0.12], // Positive decimal
     oscDecay:     [0.50, 0.50, 0.50, 0.50, 0.50, 0.50, 0.50, 0.50, 0.50, 0.50], // Positive decimal
     oscSustain:   [0.80, 0.80, 0.80, 0.80, 0.80, 0.80, 0.80, 0.80, 0.80, 0.80], // Positive decimal
@@ -34,7 +34,7 @@
   // Sequenced Data
   const sequencedData = [
     // Channel Tester
-    {volumeDb: -3, notePercent: 75, freqMult: 5},
+    {gainDb: -3, notePercent: 75, freqMult: 5},
     {channelMap: ['B1', 'B2', 'T1', 'T2', 'A1', 'A2', 'S1', 'S2', 'D1', 'D2']},
     [2,   , [,,,,[64,,0]]],
     [4,   , [[8,,16,32,,0]]],
@@ -58,7 +58,7 @@
   // [1, 1, [play no notes], 0, 90]
   // The gain is normally negative, to quieten a note, or zero for no change in gain.
   // The frequency multiplier will transpose frequencies of all notes in this sequence row.
-  // In chordFreqArray, a positive number A specifies a frequency,
+  // In 'notes to play', a positive number A specifies a frequency,
   // and an array [A, B...] specifies a short melody of multiple frequencies
   // e.g. [A, B, C] for a triplet to play within the chord.
   // You can also tie notes using nulls: [A,,B] or [A,B, ,]
@@ -69,7 +69,7 @@
   // <------- USER INPUT AREA FINISH --------->
 
 
-  let volumeDb, notePercent, freqMult
+  let gainDb, notePercent, freqMult
 
   let soloActive = false
   s.channelSolo.forEach( elt => elt ? (soloActive = true) : null )
@@ -140,10 +140,10 @@
             // channelMap control message
             updateChannelMap(currData)
           }
-          if (currData = sequencedRow.volumeDb) {
-            volumeDb = Number.isFinite(currData) && -200 <= currData && currData <= 100
+          if (currData = sequencedRow.gainDb) {
+            gainDb = Number.isFinite(currData) && -200 <= currData && currData <= 100
               ? currData
-              : volumeDb
+              : gainDb
           }
           if (currData = sequencedRow.notePercent) {
             notePercent = Number.isFinite(currData) && 0 <= currData && currData <= 100
@@ -158,23 +158,23 @@
           // Insert any other control messages here
         } else {
           // Row is an array describing a chord or polyphonic part
-          const chordBeats = sequencedRow[0] || 1;
-          const chordFreqMult = sequencedRow[1] || 1;
-          const chordFreqArray = sequencedRow[2] || [];
-          const chordVolDb = sequencedRow[3] || 0;
-          const chordNotePercent = sequencedRow[4] || notePercent || 90;
-          const freqArrayChannels = chordFreqArray.length;
+          const rowBeats = sequencedRow[0] || 1;
+          const rowFreqMult = sequencedRow[1] || 1;
+          const rowFreqArray = sequencedRow[2] || [];
+          const rowGainDb = sequencedRow[3] || 0;
+          const rowNotePercent = sequencedRow[4] || notePercent || 90;
+          const rowNumChannels = rowFreqArray.length;
           const currBeatAdj = currentBeat - startAtBeat;
-          const chordNoteFraction = Math.max(0, Math.min(1, 0.01 * chordNotePercent));
-          const chordPlayBeats = chordBeats * chordNoteFraction;
-          if (0 <= currBeatAdj && currBeatAdj <= playTotalBeats && freqArrayChannels > 0) {
-            for (let i2 = 0; i2 < freqArrayChannels; i2++) {
-              let freqData = chordFreqArray[i2]
+          const rowNoteFraction = Math.max(0, Math.min(1, 0.01 * rowNotePercent));
+          const rowPlayBeats = rowBeats * rowNoteFraction;
+          if (0 <= currBeatAdj && currBeatAdj <= playTotalBeats && rowNumChannels > 0) {
+            for (let i2 = 0; i2 < rowNumChannels; i2++) {
+              let freqData = rowFreqArray[i2]
               // Map channels in chord (i2) to synth channels (i2m)
               const i2m_plus1 = channelMapArray[i2]  // [1, 2, 3...]
               const i2m = i2m_plus1 - 1            // [0, 1, 2...]
               if (i2m_plus1 && !s.channelMute[i2m] && !(soloActive && !s.channelSolo[i2m]))  {
-                const noteAmplitude = Math.pow(10, 0.05 * (volumeDb + s.channelVolDb[i2m] + chordVolDb));
+                const noteAmplitude = Math.pow(10, 0.05 * (gainDb + s.channelGainDb[i2m] + rowGainDb));
                 // freqData is either:
                 // 1) a number, representing a single frequency / note
                 // Deal with case 1) by converting it to single note in case 2)
@@ -209,14 +209,14 @@
                 for (let i4 = 0; i4 < currSize; i4++) {
                   const thisRelFreq = freqArray[i4]
                   const thisTiming = timingArray[i4]
-                  const freqHz = thisRelFreq * freqMult * chordFreqMult;
+                  const freqHz = thisRelFreq * freqMult * rowFreqMult;
                   if (0 < freqHz) {
                     // NOTE
                     const timingFraction = thisTiming / timingSum
-                    const noteLenBeats = chordPlayBeats * timingFraction
+                    const noteLenBeats = rowPlayBeats * timingFraction
                     const noteLenTxt = `0:${noteLenBeats}:0`;
                     const noteStartBeats = thisCumulTiming / timingSum
-                    const noteStartTxt = `+0:${currBeatAdj + chordBeats * noteStartBeats}:0`;
+                    const noteStartTxt = `+0:${currBeatAdj + rowBeats * noteStartBeats}:0`;
                     synthArray[i2m].triggerAttackRelease(freqHz, noteLenTxt, noteStartTxt, noteAmplitude);
                   } else {
                     // REST
@@ -227,7 +227,7 @@
               }
             }
           }
-          currentBeat += chordBeats;
+          currentBeat += rowBeats;
         }
       });
     }
