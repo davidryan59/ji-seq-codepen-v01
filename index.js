@@ -14,16 +14,16 @@
     channelSolo:  [   0,    0,    0,    0,    0,    0,    0,    0,    0,    0], // 1 to solo
     channelMute:  [   0,    0,    0,    0,    0,    0,    0,    0,    0,    0], // 1 to mute
     channelGainDb:[  -2,   -2,   -2,   -2,   -2,   -2,   -2,   -2,   -2,   -2], // 0 is no change
-    oscAttack:    [0.12, 0.12, 0.12, 0.12, 0.12, 0.12, 0.12, 0.12, 0.12, 0.12], // Positive decimal
-    oscDecay:     [0.50, 0.50, 0.50, 0.50, 0.50, 0.50, 0.50, 0.50, 0.50, 0.50], // Positive decimal
-    oscSustain:   [0.80, 0.80, 0.80, 0.80, 0.80, 0.80, 0.80, 0.80, 0.80, 0.80], // Positive decimal
-    oscRelease:   [1.00, 1.00, 1.00, 1.00, 1.00, 1.00, 1.00, 1.00, 1.00, 1.00], // Positive decimal
-    harmonic:     [   1,    1,    1,    1,    1,    1,    1,    1,    1,    1], // Positive INTEGER
-    modIndex:     [8.00, 8.00, 8.00, 8.00, 8.00, 8.00, 8.00, 8.00, 8.00, 8.00], // Positive decimal
-    modAttack:    [0.01, 0.01, 0.01, 0.01, 0.01, 0.01, 0.01, 0.01, 0.01, 0.01], // Positive decimal
-    modDecay:     [1.00, 1.00, 1.00, 1.00, 1.00, 1.00, 1.00, 1.00, 1.00, 1.00], // Positive decimal
-    modSustain:   [0.75, 0.75, 0.75, 0.75, 0.75, 0.75, 0.75, 0.75, 0.75, 0.75], // Positive decimal
-    modRelease:   [0.50, 0.50, 0.50, 0.50, 0.50, 0.50, 0.50, 0.50, 0.50, 0.50], // Positive decimal
+    oscAttack:    [0.05, 0.05, 0.20, 0.30, 0.20, 0.02, 0.20, 0.04, 0.50, 0.60], // Positive decimal
+    oscDecay:     [0.30, 0.30, 0.60, 1.00, 0.60, 0.50, 0.60, 0.50, 0.60, 0.50], // Positive decimal
+    oscSustain:   [0.90, 0.90, 0.80, 0.77, 0.77, 0.77, 0.80, 0.80, 0.90, 0.85], // Positive decimal
+    oscRelease:   [5.00, 5.00, 3.00, 2.50, 2.50, 2.50, 2.00, 2.00, 1.50, 1.50], // Positive decimal
+    harmonic:     [   1,    3,    1,    2,    1,    6,    1,    2,    1,    4], // Positive INTEGER
+    modIndex:     [  15,   12,   10,    9,    8,    5,    6,    6,    5,    6], // Positive decimal
+    modAttack:    [0.01, 0.01, 0.01, 0.01, 0.01, 0.12, 0.01, 0.05, 0.80, 0.65], // Positive decimal
+    modDecay:     [0.30, 0.30, 0.10, 0.10, 1.00, 1.00, 1.00, 0.60, 4.00, 4.00], // Positive decimal
+    modSustain:   [0.90, 0.80, 0.70, 0.70, 0.77, 0.88, 0.80, 0.50, 0.80, 0.80], // Positive decimal
+    modRelease:   [0.50, 0.80, 1.00, 1.50, 0.60, 0.40, 0.50, 0.80, 0.75, 0.80], // Positive decimal
   }
 
   // Control variables
