@@ -12,9 +12,8 @@
   const beatsPerMinute = 180;
   const playTotalBeats = 480;
 
-  const numChannels = 5;
   const s = {    // s is shorthand for Synth Setup
-    channelNames: ['Bass', 'V1', 'V2', 'V3', 'V4'],
+    channelNames: ['Bass', 'C2', 'c3', 'C4', 'c5'],
     channelSolo:  [0, 0, 0, 0, 0],   // 0 or 1 for these
     channelMute:  [0, 0, 0, 0, 0],
     channelVolDb: [-3, -3, -3, -3, -3],  // 0 is no change
@@ -35,6 +34,7 @@
   const startAtBeat = 0;
   const sequencedData = [
     // Silent Night - verse 1
+    {channelMap: ['Bass', 'C2', 'C3']},
     [6,    , [[24,,,,,18], [60,,,64,60,,48,,,,, ,], [72,,,80,72,,60,,,,, ,]]],
     [3,    , [24, [60,,,64,60, ,], [72,,,80,72, ,]]],
     [3,    , [[0,30,32], 48, 60]],
@@ -80,6 +80,7 @@
   console.log(`Solo active: ${soloActive}`)
 
   // Setup synthArray via Tone.js module
+  const numChannels = s.channelNames.length;
   Tone.Transport.bpm.value = beatsPerMinute;
   let isSynthPlaying = false
   let synthArray = [];
@@ -117,6 +118,16 @@
     isSynthPlaying = false
   }
 
+  let channelMapArray = []
+  function updateChannelMap(channelMapData) {
+    channelMapArray = channelMapData.map(
+      mapChanName => s.channelNames.findIndex(
+        chanName => chanName.toLowerCase() === mapChanName.toLowerCase()
+      ) + 1   // The +1 makes index truthy iff its valid
+    )
+    console.log('Updated channel map', channelMapData, 'maps to channels', channelMapArray)
+  }
+
   // Function that actually plays the specified chords
   function toggleSynth() {
     if (isSynthPlaying) {
@@ -126,10 +137,13 @@
       let currentBeat = 0;
       sequencedData.forEach( sequencedRow => {
         if (!Array.isArray(sequencedRow)) {
-          // Row is a general object
-          console.log(sequencedRow)
-          let elt;
-          if ()
+          // Assume row is an object which is a control message
+          let currData;
+          if (currData = sequencedRow.channelMap) {
+            // channelMap control message
+            updateChannelMap(currData)
+          }
+          // Insert any other control messages here
         } else {
           // Row is an array describing a chord or polyphonic part
           const chordBeats = sequencedRow[0] || 1;
@@ -142,25 +156,28 @@
           const chordNoteFraction = Math.max(0, Math.min(1, 0.01 * chordNotePercent));
           const chordPlayBeats = chordBeats * chordNoteFraction;
           if (0 <= currBeatAdj && currBeatAdj <= playTotalBeats && freqArrayChannels > 0) {
-            for (let i2 = 0; i2 < Math.min(freqArrayChannels, numChannels); i2++) {
-              if (!s.channelMute[i2] && !(soloActive && !s.channelSolo[i2]))  {
-                const noteAmplitude = Math.pow(10, 0.05 * (masterVolumeDb + s.channelVolDb[i2] + chordVolDb));
-                let freqVoice = chordFreqArray[i2]
-                // freqVoice is either:
+            for (let i2 = 0; i2 < freqArrayChannels; i2++) {
+              // Map channels in chord (i2) to synth channels (i2m)
+              const i2m_plus1 = channelMapArray[i2]  // [1, 2, 3...]
+              const i2m = i2m_plus1 - 1            // [0, 1, 2...]
+              if (i2m_plus1 && !s.channelMute[i2m] && !(soloActive && !s.channelSolo[i2m]))  {
+                const noteAmplitude = Math.pow(10, 0.05 * (masterVolumeDb + s.channelVolDb[i2m] + chordVolDb));
+                let freqData = chordFreqArray[i2m]
+                // freqData is either:
                 // 1) a number, representing a single frequency / note
                 // Deal with case 1) by converting it to single note in case 2)
-                if (Number.isInteger(freqVoice)) freqVoice = [freqVoice]
+                if (Number.isInteger(freqData)) freqData = [freqData]
                 // 2) an array of numbers, representing a melody of several frequencies
                 // Deal with non-case-2) by converting it to a rest in case 2)
-                if (!Array.isArray(freqVoice)) freqVoice = [0]
-                // Now freqVoice must be an array.
+                if (!Array.isArray(freqData)) freqData = [0]
+                // Now freqData must be an array.
                 // Convert to freqArray with timings.
                 let currSize = 0
                 const freqArray = []
                 const timingArray = []
                 let timingSum = 0
-                for (let i3 = 0; i3 < freqVoice.length; i3++) {
-                  const thisFreq = freqVoice[i3]
+                for (let i3 = 0; i3 < freqData.length; i3++) {
+                  const thisFreq = freqData[i3]
                   if (Number.isFinite(thisFreq)) {
                     freqArray.push(Math.abs(thisFreq)) // 0 is a rest, positive number is a frequency
                     timingArray[currSize] = 1
@@ -188,7 +205,7 @@
                     const noteLenTxt = `0:${noteLenBeats}:0`;
                     const noteStartBeats = thisCumulTiming / timingSum
                     const noteStartTxt = `+0:${currBeatAdj + chordBeats * noteStartBeats}:0`;
-                    synthArray[i2].triggerAttackRelease(freqHz, noteLenTxt, noteStartTxt, noteAmplitude);
+                    synthArray[i2m].triggerAttackRelease(freqHz, noteLenTxt, noteStartTxt, noteAmplitude);
                   } else {
                     // REST
                     // DO NOTHING
