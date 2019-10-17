@@ -5,75 +5,71 @@
 
 (function() {
 
-  // Setup control variables
-  const masterVolumeDb = -6;
-  const masterNotePercent = 82;
-  const masterFreqMult = 6.00;
-  const beatsPerMinute = 180;
-  const playTotalBeats = 480;
+  // <------- USER INPUT AREA START --------->
 
-  const s = {    // s is shorthand for Synth Setup
-    channelNames: ['Bass', 'C2', 'c3', 'C4', 'c5'],
-    channelSolo:  [0, 0, 0, 0, 0],   // 0 or 1 for these
-    channelMute:  [0, 0, 0, 0, 0],
-    channelVolDb: [-3, -3, -3, -3, -3],  // 0 is no change
-    oscTypes: ['sine', 'sine', 'sine', 'sine', 'sine'],
-    modTypes: ['sine', 'sine', 'sine', 'sine', 'sine'],
-    oscAttack:  [0.12, 0.12, 0.12, 0.12, 0.12], // Positive decimals
-    oscDecay:   [0.50, 0.50, 0.50, 0.50, 0.50],
-    oscSustain: [0.80, 0.80, 0.80, 0.80, 0.80],
-    oscRelease: [1.00, 1.00, 1.00, 1.00, 1.00],
-    harmonic:   [1,    1,    1,    1,    1   ], // Positive integer
-    modIndex:   [8.00, 8.00, 8.00, 8.00, 8.00],
-    modAttack:  [0.01, 0.01, 0.01, 0.01, 0.01],
-    modDecay:   [1.00, 1.00, 1.00, 1.00, 1.00],
-    modSustain: [0.75, 0.75, 0.75, 0.75, 0.75],
-    modRelease: [0.50, 0.50, 0.50, 0.50, 0.50],
+  // Channel / Voice setup
+  // Currently it is Bass, Tenor, Alto, Soprano, Descant; 2 channels for each
+  const s = {
+    channelNames: ['B1', 'B2', 'T1', 'T2', 'A1', 'A2', 'S1', 'S2', 'D1', 'D2'],
+    channelSolo:  [   0,    0,    0,    0,    0,    0,    0,    0,    0,    0], // 1 to solo
+    channelMute:  [   0,    0,    0,    0,    0,    0,    0,    0,    0,    0], // 1 to mute
+    channelVolDb: [  -2,   -2,   -2,   -2,   -2,   -2,   -2,   -2,   -2,   -2], // 0 is no change
+    oscAttack:    [0.12, 0.12, 0.12, 0.12, 0.12, 0.12, 0.12, 0.12, 0.12, 0.12], // Positive decimal
+    oscDecay:     [0.50, 0.50, 0.50, 0.50, 0.50, 0.50, 0.50, 0.50, 0.50, 0.50], // Positive decimal
+    oscSustain:   [0.80, 0.80, 0.80, 0.80, 0.80, 0.80, 0.80, 0.80, 0.80, 0.80], // Positive decimal
+    oscRelease:   [1.00, 1.00, 1.00, 1.00, 1.00, 1.00, 1.00, 1.00, 1.00, 1.00], // Positive decimal
+    harmonic:     [   1,    1,    1,    1,    1,    1,    1,    1,    1,    1], // Positive INTEGER
+    modIndex:     [8.00, 8.00, 8.00, 8.00, 8.00, 8.00, 8.00, 8.00, 8.00, 8.00], // Positive decimal
+    modAttack:    [0.01, 0.01, 0.01, 0.01, 0.01, 0.01, 0.01, 0.01, 0.01, 0.01], // Positive decimal
+    modDecay:     [1.00, 1.00, 1.00, 1.00, 1.00, 1.00, 1.00, 1.00, 1.00, 1.00], // Positive decimal
+    modSustain:   [0.75, 0.75, 0.75, 0.75, 0.75, 0.75, 0.75, 0.75, 0.75, 0.75], // Positive decimal
+    modRelease:   [0.50, 0.50, 0.50, 0.50, 0.50, 0.50, 0.50, 0.50, 0.50, 0.50], // Positive decimal
   }
 
+  // Control variables
+  const beatsPerMinute = 180;
+  const playTotalBeats = 480;
   const startAtBeat = 0;
+
+  // Sequenced Data
   const sequencedData = [
-    // Silent Night - verse 1
-    {channelMap: ['Bass', 'C2', 'C3']},
-    [6,    , [[24,,,,,18], [60,,,64,60,,48,,,,, ,], [72,,,80,72,,60,,,,, ,]]],
-    [3,    , [24, [60,,,64,60, ,], [72,,,80,72, ,]]],
-    [3,    , [[0,30,32], 48, 60]],
+    // Channel Tester
+    {volumeDb: -3, notePercent: 75, freqMult: 5},
+    {channelMap: ['B1', 'B2', 'T1', 'T2', 'A1', 'A2', 'S1', 'S2', 'D1', 'D2']},
+    [2,   , [,,,,[64,,0]]],
+    [4,   , [[8,,16,32,,0]]],
+    [4,   , [,[9,,18,36,,0]]],
+    [4,   , [,,[16,,32,64,,0]]],
+    [4,   , [,,,[18,,36,72,,0]]],
+    [4,   , [,,,,[30,,60,120,,0]]],
+    [4,   , [,,,,,[32,,64,128,,0]]],
+    [4,   , [,,,,,,[50,,100,200,,0]]],
+    [4,   , [,,,,,,,[55,,110,220,,0]]],
+    [4,   , [,,,,,,,,[80,,160,320,,0]]],
+    [4,   , [,,,,,,,,,[90,,180,360,,0]]],
 
-    [3,    , [36, [90,,90], [108,,108]]],
-    [3,    , [18, [72,,63], 90]],
-    [6,    , [[24,,,,27,30], [60,,60,48,, ,], [96,,96,72,, ,]]],
-
-    [3,    , [[32,,32], [48,,48], [80,,80]]],
-    [3,    , [[40,,,36,32, ,], [64,,64], [96,,,90,80, ,]]],
-    [3,    , [[30,,,32,30, ,], [48,,48], [72,80,72]]],
-    [3,    , [[24, 27, 30], 48, 60]],
-
-    [3,    , [32, [48,,48], [80,,80]]],
-    [3,    , [16, [64,,,72,64, ,], [96,90,80]]],
-    [6,    , [[15,20], [54,,,,,,,,45,,50, ,], [72,,,161/2,72,,60,,,,, ,]]],  // 80+81 = 161
-
-    [3, 4/3, [20, [48,,48], [80,,80]]],
-    [3,    , [[30,,30], 75, [255/2,,,105,90, ,]]],
-    [3,    , [[20,,24], 60, 96]],
-    [3, 4/3, [20, 50, 90]],
-
-    [3,    , [18, [60,,48], [96,72,60]]],
-    [3,    , [[9,,9*5/4], [45,,63/2], [72,63,54]]],
-    [6,    , [12, 30, 48]],
+    // Add sequenced rows here
   ];
-  // Above, the chords are setup as an array.
-  // Each chord is itself an array of format:
-  // [chordBeats, chordFreqMult, [chordFreqArray], chordVolDb, chordNotePercent]
+  // The sequenced data is a big array.
+  // Each row is either an object with control values, or an array containing notes to play.
+  // A note array has the following format:
+  // [time (beats), optional frequency multiplier, [notes to play], gain in dB, note play %]
   // Defaults are:
-  // [1, [], 1, 0, masterNotePercent]
-  // Note that chordVolDb is normally less than 0 (negative) to quieten a note.
+  // [1, 1, [play no notes], 0, 90]
+  // The gain is normally negative, to quieten a note, or zero for no change in gain.
+  // The frequency multiplier will transpose frequencies of all notes in this sequence row.
   // In chordFreqArray, a positive number A specifies a frequency,
   // and an array [A, B...] specifies a short melody of multiple frequencies
   // e.g. [A, B, C] for a triplet to play within the chord.
   // You can also tie notes using nulls: [A,,B] or [A,B, ,]
   // and specify rests using 0: [A,0,B], [0,A] etc
   // or do both: [A,,0,,B, ,]
-  // Note - if the last elt is null, an extra comma is needed!
+  // Note - if the last array element is null, an extra comma is needed!
+
+  // <------- USER INPUT AREA FINISH --------->
+
+
+  let volumeDb, notePercent, freqMult
 
   let soloActive = false
   s.channelSolo.forEach( elt => elt ? (soloActive = true) : null )
@@ -81,23 +77,34 @@
 
   // Setup synthArray via Tone.js module
   const numChannels = s.channelNames.length;
+  console.log(`There are ${numChannels} channels available`)
   Tone.Transport.bpm.value = beatsPerMinute;
   let isSynthPlaying = false
   let synthArray = [];
+
+  let channelMapArray = []
+  function updateChannelMap(channelMapData) {
+    channelMapArray = channelMapData.map(
+      mapChanName => s.channelNames.findIndex(
+        chanName => chanName.toLowerCase() === mapChanName.toLowerCase()
+      ) + 1   // The +1 makes index truthy iff its valid
+    )
+    console.log('Updated channel map', channelMapData, 'maps to channels', channelMapArray)
+  }
 
   function setupSynths() {
     console.log('Setting up synths')
     synthArray = []
     for (let i1 = 0; i1 < numChannels; i1++) {
       synthArray[i1] = new Tone.FMSynth({
-        oscillator: {type: s.oscTypes[i1]},
+        oscillator: {type: 'sine'},
         envelope: {
           attack: s.oscAttack[i1],
           decay: s.oscDecay[i1],
           sustain: s.oscSustain[i1],
           release: s.oscRelease[i1]
         },
-        modulation: {type: s.modTypes[i1]},
+        modulation: {type: 'sine'},
         harmonicity: s.harmonic[i1],
         modulationIndex: s.modIndex[i1],
         modulationEnvelope: {
@@ -118,16 +125,6 @@
     isSynthPlaying = false
   }
 
-  let channelMapArray = []
-  function updateChannelMap(channelMapData) {
-    channelMapArray = channelMapData.map(
-      mapChanName => s.channelNames.findIndex(
-        chanName => chanName.toLowerCase() === mapChanName.toLowerCase()
-      ) + 1   // The +1 makes index truthy iff its valid
-    )
-    console.log('Updated channel map', channelMapData, 'maps to channels', channelMapArray)
-  }
-
   // Function that actually plays the specified chords
   function toggleSynth() {
     if (isSynthPlaying) {
@@ -143,6 +140,21 @@
             // channelMap control message
             updateChannelMap(currData)
           }
+          if (currData = sequencedRow.volumeDb) {
+            volumeDb = Number.isFinite(currData) && -200 <= currData && currData <= 100
+              ? currData
+              : volumeDb
+          }
+          if (currData = sequencedRow.notePercent) {
+            notePercent = Number.isFinite(currData) && 0 <= currData && currData <= 100
+              ? currData
+              : notePercent
+          }
+          if (currData = sequencedRow.freqMult) {
+            freqMult = Number.isFinite(currData) && 0 < currData
+              ? currData
+              : freqMult
+          }
           // Insert any other control messages here
         } else {
           // Row is an array describing a chord or polyphonic part
@@ -150,19 +162,19 @@
           const chordFreqMult = sequencedRow[1] || 1;
           const chordFreqArray = sequencedRow[2] || [];
           const chordVolDb = sequencedRow[3] || 0;
-          const chordNotePercent = sequencedRow[4] || masterNotePercent;
+          const chordNotePercent = sequencedRow[4] || notePercent || 90;
           const freqArrayChannels = chordFreqArray.length;
           const currBeatAdj = currentBeat - startAtBeat;
           const chordNoteFraction = Math.max(0, Math.min(1, 0.01 * chordNotePercent));
           const chordPlayBeats = chordBeats * chordNoteFraction;
           if (0 <= currBeatAdj && currBeatAdj <= playTotalBeats && freqArrayChannels > 0) {
             for (let i2 = 0; i2 < freqArrayChannels; i2++) {
+              let freqData = chordFreqArray[i2]
               // Map channels in chord (i2) to synth channels (i2m)
               const i2m_plus1 = channelMapArray[i2]  // [1, 2, 3...]
               const i2m = i2m_plus1 - 1            // [0, 1, 2...]
               if (i2m_plus1 && !s.channelMute[i2m] && !(soloActive && !s.channelSolo[i2m]))  {
-                const noteAmplitude = Math.pow(10, 0.05 * (masterVolumeDb + s.channelVolDb[i2m] + chordVolDb));
-                let freqData = chordFreqArray[i2m]
+                const noteAmplitude = Math.pow(10, 0.05 * (volumeDb + s.channelVolDb[i2m] + chordVolDb));
                 // freqData is either:
                 // 1) a number, representing a single frequency / note
                 // Deal with case 1) by converting it to single note in case 2)
@@ -197,7 +209,7 @@
                 for (let i4 = 0; i4 < currSize; i4++) {
                   const thisRelFreq = freqArray[i4]
                   const thisTiming = timingArray[i4]
-                  const freqHz = thisRelFreq * masterFreqMult * chordFreqMult;
+                  const freqHz = thisRelFreq * freqMult * chordFreqMult;
                   if (0 < freqHz) {
                     // NOTE
                     const timingFraction = thisTiming / timingSum
