@@ -178,7 +178,7 @@
                 // freqData is either:
                 // 1) a number, representing a single frequency / note
                 // Deal with case 1) by converting it to single note in case 2)
-                if (Number.isInteger(freqData)) freqData = [freqData]
+                if (Number.isFinite(freqData)) freqData = [freqData]
                 // 2) an array of numbers, representing a melody of several frequencies
                 // Deal with non-case-2) by converting it to a rest in case 2)
                 if (!Array.isArray(freqData)) freqData = [0]
